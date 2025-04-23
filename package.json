@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "My first project of node js",
   "main": "app.js",
+  "type":"module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
