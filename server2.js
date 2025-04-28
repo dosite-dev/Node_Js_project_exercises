@@ -6,8 +6,6 @@ const notes = [
     { id: 1, name: 'programming', content: 'programming notes', createdAt: '' },
     { id: 2, name: 'web development', content: 'web development notes', createdAt: '' },
     { id: 3, name: 'algorthim', content: 'algorithm  notes', createdAt: '' },
-
-
 ]
 const server = createServer((req, res) => {
     // Retrieving all notes
@@ -21,7 +19,7 @@ const server = createServer((req, res) => {
         const foundId = req.url.split("/")[3]
         console.log(foundId)
 
-        const foundingNoteById = notes.filter(note => note.id == parseInt(foundId))
+        const foundingNoteById = notes.find(note => note.id == parseInt(foundId))
         res.setHeader('content-type', 'application/json')
         res.write(JSON.stringify(foundingNoteById))
         res.end()
@@ -36,13 +34,25 @@ const server = createServer((req, res) => {
         req.on('end', () => {
             const { name, content } = JSON.parse(body)
             const newNote = {
+                id: notes.length + 1,
                 name,
                 content
             }
             notes.push(newNote)
             res.writeHead(201, 'content-type', 'application/json')
-            res.end(JSON.stringify({ message: 'Data added', newNote }))
+            res.end(JSON.stringify({ message: 'Data added', notes }))
         })
+    }
+    // deleting note 
+    else if (req.url.match('/api/notes/delete/[0-9]+') && req.method === 'GET') {
+        const foundedId = req.url.split("/")[4]
+        console.log(foundedId)
+
+        const deleteFoundedId = notes.filter(note => note.id != parseInt(foundedId))
+        console.log(deleteFoundedId)
+        res.writeHead(200, 'content-type', 'application/json')
+        res.end(JSON.stringify({ message: `Note with ${foundedId} deleted successfully`, deleteFoundedId }))
+        res.end()
     }
 
     else {
@@ -52,10 +62,6 @@ const server = createServer((req, res) => {
         res.write(JSON.stringify({ message: 'Router not found' }))
         res.end()
     }
-
-
-    //
-
 })
 
 server.listen(PORT, () => {
